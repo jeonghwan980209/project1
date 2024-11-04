@@ -19,6 +19,8 @@ spec:
       labels:
         app: web
     spec:
+      imagePullSecrets:
+        - name:  secret
       containers:
       - name: nginx1
         image: jeonghwan98/pro:index.kia
