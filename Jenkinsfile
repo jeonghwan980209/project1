@@ -13,8 +13,8 @@ pipeline {
                 script {
                     // Docker 빌드를 위한 권한이 필요할 수 있으므로, 필요시 sudo를 사용할 수 있도록 설정
                     sh '''
-                    sudo docker build -f /root/jenkins/Dockerfile -t 211.183.3.100/pro1/nginx:latest .
-                    sudo docker push 211.183.3.100/pro1/nginx:latest
+                    sudo docker build -f /root/jenkins/Dockerfile -t 211.183.3.115/project/project/jh .
+                    sudo docker push 211.183.3.115/project/project/jh .
                     '''
                 }
             }
