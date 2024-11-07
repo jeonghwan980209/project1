@@ -32,7 +32,7 @@ pipeline {
                     // playbook.yml 파일을 실행하기 전에 적절한 경로와 설정을 확인하세요
                     sh '''
                     cd ${WORKSPACE}  # Ansible 플레이북 파일이 프로젝트 디렉토리 내에 있다고 가정
-                    ansible-playbook deployment.yml
+                    ansible-playbook -i hosts deployment.yml
                     '''
                 }
             }
