@@ -1,32 +1,37 @@
-- name: Deploy Kubernetes resources for project1
-  hosts: k8s_nodes
-  gather_facts: no
-  become: true
-  environment:
-    KUBECONFIG: "/home/jenkins/.kube/config"
-  tasks:
-    - name: Create nginx Deployment for project1
-      k8s:
-        state: present
-        verify_ssl: no
-        definition:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: nginx-deploy
-            namespace: default
-          spec:
-            replicas: 3
-            selector:
-              matchLabels:
-                app: web
-            template:
-              metadata:
-                labels:
-                  app: web
-              spec:
-                containers:
-                  - name: nginx
-                    image: nginx:latest
-                    ports:
-                      - containerPort: 80
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: jhnginx
+        image: 211.183.3.115/project/project:jh  # Docker 이미지 주소
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+        - name: harbor-registry 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+spec:
+  selector:
+    app: nginx
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
