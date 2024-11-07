@@ -34,9 +34,9 @@ pipeline {
                     cd ${WORKSPACE}  # Ansible 플레이북 파일이 프로젝트 디렉토리 내에 있다고 가정
                     # inventory 파일을 명시적으로 지정
                     echo "[k8s_nodes]" > hosts
-                    echo "master ansible_host=211.183.3.100" >> hosts
-                    echo "node1 ansible_host=211.183.3.101" >> hosts
-                    echo "node2 ansible_host=211.183.3.102" >> hosts
+                    echo "master ansible_host=211.183.3.110" >> hosts
+                    echo "node1 ansible_host=211.183.3.111" >> hosts
+                    echo "node2 ansible_host=211.183.3.112" >> hosts
                     # Ansible 플레이북 실행 시 inventory 파일을 명시적으로 지정
                     ansible-playbook -i hosts deployment.yml
                     '''
