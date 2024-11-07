@@ -1,6 +1,7 @@
 - name: Deploy Kubernetes resources for project1
   hosts: localhost
   gather_facts: no
+  become: true  # 권한 상승을 위해 추가
   tasks:
     - name: Create Namespace for project1
       k8s:
@@ -53,4 +54,4 @@
             ports:
               - port: 80
                 targetPort: 80
-            type: NodePort  # NodePort or LoadBalancer
+            type: NodePort
