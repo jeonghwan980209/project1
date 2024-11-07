@@ -1,49 +1,28 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        KUBECONFIG = '/home/jenkins/.kube/config'
+  stages {
+    stage('gitlab scm update') {
+      steps {
+        git url: 'https://github.com/jeonghwan980209/project1.git', branch: 'main'
+      }
     }
 
-    stages {
-        stage('git scm update') {
-            steps {
-                git url: 'https://github.com/jeonghwan980209/project1.git', branch: 'main'
-            }
-        }
-
-        stage('docker build and push') {
-            steps {
-                script {
-                    // Docker 빌드를 위한 권한이 필요할 수 있으므로, 필요시 sudo를 사용할 수 있도록 설정
-                    // Dockerfile 경로를 Git 리포지토리 내 경로로 설정
-                    sh '''
-                    cd ${WORKSPACE}  # Jenkins workspace로 이동하여, Dockerfile이 그곳에 있다고 가정
-                    sudo docker build -f Dockerfile -t 211.183.3.115/project/project/jh .
-                    sudo docker push 211.183.3.115/project/project/jh
-                    '''
-                }
-            }
-        }
-
-        stage('deploy and service') {
-            steps {
-                script {
-                    // Ansible 플레이북을 실행하기 전에 SSH 키로 원격 서버에 접근할 수 있도록 설정
-                    sshagent(['your-ssh-credential-id']) {
-                        sh '''
-                        cd ${WORKSPACE}  # Ansible 플레이북 파일이 프로젝트 디렉토리 내에 있다고 가정
-                        # inventory 파일을 명시적으로 지정
-                        echo "[k8s_nodes]" > hosts
-                        echo "master ansible_host=211.183.3.110" >> hosts
-                        echo "node1 ansible_host=211.183.3.111" >> hosts
-                        echo "node2 ansible_host=211.183.3.112" >> hosts
-                        # Ansible 플레이북 실행 시 inventory 파일을 명시적으로 지정
-                        ansible-playbook -i hosts deployment.yml
-                        '''
-                    }
-                }
-            }
-        }
+    stage('이미지 생성') {
+      steps {
+        sh '''
+        docker build -t 211.183.3.115/project/project/jh .
+        sudo docker push 211.183.3.115/project/project/jh
+        '''
+      }
     }
+
+    stage('배포') {
+      steps {
+        sh '''
+        ansible-playbook deployment.yml
+        '''
+      }
+    }
+  }
 }
