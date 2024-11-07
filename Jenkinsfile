@@ -13,7 +13,8 @@ pipeline {
                 script {
                     // Docker 빌드를 위한 권한이 필요할 수 있으므로, 필요시 sudo를 사용할 수 있도록 설정
                     sh '''
-                    sudo docker build -t 211.183.3.100/pro1/nginx:latest .
+                    # Dockerfile이 현재 작업 디렉토리에 있어야 하므로, 현재 디렉토리에서 빌드 진행
+                    sudo docker build -f /root/jenkins/Dockerfile -t 211.183.3.100/pro1/nginx:latest .
                     sudo docker push 211.183.3.100/pro1/nginx:latest
                     '''
                 }
