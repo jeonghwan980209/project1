@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        KUBECONFIG = '/home/jenkins/.kube/config'
+    }
+
     stages {
         stage('git scm update') {
             steps {
