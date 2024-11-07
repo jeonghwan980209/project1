@@ -1,21 +1,20 @@
 - name: Deploy Kubernetes resources for project1
-  hosts: master
+  hosts: k8s_nodes
   gather_facts: no
   become: true
   environment:
-    KUBECONFIG: "/home/jenkins/.kube/config"  # 환경변수로 KUBECONFIG 설정
-
+    KUBECONFIG: "/home/jenkins/.kube/config"
   tasks:
     - name: Create nginx Deployment for project1
       k8s:
         state: present
-        verify_ssl: no  # SSL 인증서 검증 비활성화
+        verify_ssl: no
         definition:
           apiVersion: apps/v1
           kind: Deployment
           metadata:
             name: nginx-deploy
-            namespace: default  # 네임스페이스 없이 기본(default) 네임스페이스에 배포
+            namespace: default
           spec:
             replicas: 3
             selector:
@@ -26,28 +25,8 @@
                 labels:
                   app: web
               spec:
-                imagePullSecrets:
-                  - name: secret-harbor
                 containers:
                   - name: nginx
-                    image: 211.183.3.115/project1/nginx:jh
+                    image: nginx:latest
                     ports:
                       - containerPort: 80
-
-    - name: Create Service for nginx Deployment
-      k8s:
-        state: present
-        verify_ssl: no  # SSL 인증서 검증 비활성화
-        definition:
-          apiVersion: v1
-          kind: Service
-          metadata:
-            name: web-svc
-            namespace: default  # 네임스페이스 없이 기본(default) 네임스페이스에 서비스 생성
-          spec:
-            selector:
-              app: web
-            ports:
-              - port: 80
-                targetPort: 80
-            type: NodePort
