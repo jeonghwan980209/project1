@@ -23,6 +23,25 @@ spec:
         - containerPort: 80
       imagePullSecrets:
         - name: harbor-registry 
+
+---
+- name: Deploy to Kubernetes
+  hosts: localhost  # localhost 또는 실행할 호스트 지정
+  become: true
+  tasks:
+    - name: Copy the YAML file to the master
+      copy:
+        src: deployment.yml
+        dest: /home/user1/project_jenkis/deployment.yml
+        owner: user1
+        group: user1
+        mode: '0664'
+        
+    - name: Deploy application using kubectl
+      shell: sudo kubectl apply -f /home/user1/project_jenkis/deployment.yml
+
+---
+
 ---
 apiVersion: v1
 kind: Service
