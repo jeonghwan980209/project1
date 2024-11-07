@@ -23,7 +23,7 @@ spec:
         - name: secret-harbor
       containers:
         - name: nginx
-          image: 211.183.3.100/pro1/nginx:latest
+          image: 211.183.3.150/project/project:jh
           ports: 
             - containerPort: 80
 
