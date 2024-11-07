@@ -1,57 +1,34 @@
 pipeline {
-<<<<<<< HEAD
     agent any
+
     stages {
         stage('git scm update') {
             steps {
                 git url: 'https://github.com/jeonghwan980209/pro.git', branch: 'main'
             }
         }
-        stage('delivery and deployment') {
+
+        stage('docker build and push') {
             steps {
-                sh '''
-                ansible master -m copy -a "src=db.yml dest=/root/docker/db/db.yml" --become
-                now=$(date +%y%m%d%H%M)
-                # Docker 이미지 빌드
-                sudo docker build -t jeonghwan98/pro:${now} .
-                # Docker 이미지 푸시
-                sudo docker push jeonghwan98/pro:${now}
-                # 노드에서 Docker 이미지 풀
-                ansible node -m shell -a "sudo docker pull jeonghwan98/pro:${now}"
-                # Kubernetes 배포 생성
-                ansible master -m shell -a "sudo kubectl create deploy web-${now} --replicas=3 --port=80 --image=jeonghwan98/pro:${now}"
-                # Kubernetes 서비스 생성
-                ansible master -m shell -a "sudo kubectl expose deploy web-${now} --type=LoadBalancer --port=80 --target-port=80 --name=web-${now}-svc"
-                '''
+                script {
+                    // Docker 빌드를 위한 권한이 필요할 수 있으므로, 필요시 sudo를 사용할 수 있도록 설정
+                    sh '''
+                    sudo docker build -t 211.183.3.100/pro1/nginx:latest .
+                    sudo docker push 211.183.3.100/pro1/nginx:latest
+                    '''
+                }
+            }
+        }
+
+        stage('deploy and service') {
+            steps {
+                script {
+                    // playbook.yml 파일을 실행하기 전에 적절한 경로와 설정을 확인하세요
+                    sh '''
+                    ansible-playbook playbook.yml
+                    '''
+                }
             }
         }
     }
 }
-=======
-  agent any
-  stages {
-    stage('git scm update') {
-      steps {
-        git url: 'https://github.com/jeonghwan980209/pro.git', branch: 'main'
-      }
-    }
-    stage('docker build and push') {
-      steps {
-        sh '''
-        sudo docker build -t 211.183.3.100/pro1/nginx:latest .
-        sudo docker push 211.183.3.100/pro1/nginx:latest
-        '''
-      }
-    }
-    stage('deploy and service') {
-      steps {
-        sh '''
-        ansible-playbook playbook.yml
-        '''
-      }
-    }
-  }
-}
-
-
->>>>>>> fad506a (Add Jenkinsfile and deployment YAML)
