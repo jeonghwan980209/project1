@@ -2,6 +2,9 @@
   hosts: localhost
   gather_facts: no
   become: true  # 권한 상승을 위해 추가
+  environment:
+    KUBECONFIG: "/home/jenkins/.kube/config"  # 환경변수로 KUBECONFIG 설정
+
   tasks:
     - name: Create Namespace for project1
       k8s:
@@ -32,26 +35,7 @@
                   app: web
               spec:
                 imagePullSecrets:
-                  - name: secret-harbor
+                  - name: secret-harbor  # Harbor 레지스트리 비밀번호를 포함한 시크릿 사용
                 containers:
                   - name: nginx
-                    image: 211.183.3.115/project1/nginx:jh
-                    ports:
-                      - containerPort: 80
-
-    - name: Create Service for nginx Deployment
-      k8s:
-        state: present
-        definition:
-          apiVersion: v1
-          kind: Service
-          metadata:
-            name: web-svc
-            namespace: project1
-          spec:
-            selector:
-              app: web
-            ports:
-              - port: 80
-                targetPort: 80
-            type: NodePort
+                    image: 211.183.3.115/project1/nginx:jh  # Docker 이미
