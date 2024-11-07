@@ -1,4 +1,5 @@
 pipeline {
+<<<<<<< HEAD
     agent any
     stages {
         stage('git scm update') {
@@ -26,3 +27,31 @@ pipeline {
         }
     }
 }
+=======
+  agent any
+  stages {
+    stage('git scm update') {
+      steps {
+        git url: 'https://github.com/jeonghwan980209/pro.git', branch: 'main'
+      }
+    }
+    stage('docker build and push') {
+      steps {
+        sh '''
+        sudo docker build -t 211.183.3.100/pro1/nginx:latest .
+        sudo docker push 211.183.3.100/pro1/nginx:latest
+        '''
+      }
+    }
+    stage('deploy and service') {
+      steps {
+        sh '''
+        ansible-playbook playbook.yml
+        '''
+      }
+    }
+  }
+}
+
+
+>>>>>>> fad506a (Add Jenkinsfile and deployment YAML)
